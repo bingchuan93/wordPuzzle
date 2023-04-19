@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
-import { Alert, SafeAreaView, Text, useColorScheme, View } from 'react-native';
+import { Alert, BackHandler, SafeAreaView, Text, useColorScheme, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../type';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { useFocusEffect } from '@react-navigation/native';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'HomePage'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'Game'>;
 
 function Game({ navigation }: Props): JSX.Element {
 	const isDarkMode = useColorScheme() === 'dark';
@@ -14,19 +15,14 @@ function Game({ navigation }: Props): JSX.Element {
 		backgroundColor: isDarkMode ? Colors.darker : Colors.lighter
 	};
 
-	useEffect(() => {
-		navigation.addListener('beforeRemove', (e) => {
-			e.preventDefault();
-			Alert.alert('', 'Are you sure you want to leave the current game?', [
-				{ text: 'Stay', style: 'cancel', onPress: () => {} },
-				{
-					text: 'Leave',
-					style: 'destructive',
-					onPress: () => navigation.dispatch(e.data.action)
-				}
-			]);
-		});
-	}, [navigation]);
+	useFocusEffect(() => {
+		const sub = BackHandler.addEventListener('hardwareBackPress', preventNativeHardwareBackPress);
+		return () => sub.remove();
+	});
+
+	const preventNativeHardwareBackPress = () => {
+		return true;
+	};
 
 	return (
 		<SafeAreaView style={backgroundStyle}>

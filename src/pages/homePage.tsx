@@ -1,31 +1,51 @@
-import React from 'react';
-import { Button, SafeAreaView, Text, useColorScheme, View } from 'react-native';
+import React, { useState } from 'react';
+import { Text, View } from 'react-native';
+import { Box, Button } from 'native-base';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { RootStackParamList } from '../type';
+import { StyleSheet } from 'react-native';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomePage'>;
 
 function HomePage({ navigation }: Props): JSX.Element {
-	const isDarkMode = useColorScheme() === 'dark';
+	const [categories, setCategories] = useState([]);
 
-	const backgroundStyle = {
-		backgroundColor: isDarkMode ? Colors.darker : Colors.lighter
-	};
+	// const useEffect(() => {
+
+	// },[])
 
 	return (
-		<SafeAreaView style={backgroundStyle}>
-			<View>
-				<Text>HomePage.ts</Text>
-				<Button
-					title="Jump"
-					onPress={() => {
-						navigation.push('Game');
-					}}
-				/>
-			</View>
-		</SafeAreaView>
+		<View style={styles.container}>
+			<Box
+				p="2"
+				mt="10"
+				bg="bg.500"
+				_text={{
+					fontSize: '4xl',
+					fontWeight: 'medium',
+					color: 'text.500',
+					letterSpacing: 'lg',
+					textAlign: 'center'
+				}}
+				shadow={2}
+			>
+				Word Puzzle
+			</Box>
+			<Button
+				onPress={() => {
+					navigation.push('Game');
+				}}
+			>
+				Jump
+			</Button>
+		</View>
 	);
 }
+
+const styles = StyleSheet.create({
+	container: {
+		paddingHorizontal: 20
+	}
+});
 
 export default HomePage;
