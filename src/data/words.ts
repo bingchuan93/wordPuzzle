@@ -1,6 +1,12 @@
+/**
+ * Data
+ */
+
+import { getRandomisedNumber } from '../utils';
+
 const wordsByCategory = [
 	{
-		categoryId: 1,
+		categoryId: '1',
 		words: [
 			{ name: 'United States' },
 			{ name: 'China' },
@@ -21,11 +27,11 @@ const wordsByCategory = [
 			{ name: 'Argentina' },
 			{ name: 'Spain' },
 			{ name: 'Australia' },
-			{ name: 'Egypt' }
-		]
+			{ name: 'Egypt' },
+		],
 	},
 	{
-		categoryId: 2,
+		categoryId: '2',
 		words: [
 			{ name: 'Teacher' },
 			{ name: 'Nurse' },
@@ -44,11 +50,11 @@ const wordsByCategory = [
 			{ name: 'Barber' },
 			{ name: 'Plumber' },
 			{ name: 'Designer' },
-			{ name: 'Gardener' }
-		]
+			{ name: 'Gardener' },
+		],
 	},
 	{
-		categoryId: 3,
+		categoryId: '3',
 		words: [
 			{ name: 'Killer whale' },
 			{ name: 'Giant panda' },
@@ -69,20 +75,45 @@ const wordsByCategory = [
 			{ name: 'Koala' },
 			{ name: 'Dolphin' },
 			{ name: 'Whale' },
-			{ name: 'Shark' }
-		]
-	}
+			{ name: 'Shark' },
+		],
+	},
+	{ categoryId: '4', words: [{ name: 'abcd', hint: 'Simple' }] },
 ];
 
+/**
+ * Types
+ */
+
+export type WordData = {
+	categoryId: string;
+	id: string;
+	word: string;
+	hint: string;
+};
+
+/**
+ * Utils
+ */
+
 let wordId = 0;
-export const getWords = () => {
+export const getAllWords = (): WordData[] => {
 	const words = wordsByCategory.flatMap((categoryWords) => {
 		return categoryWords.words.map((word) => ({
 			categoryId: categoryWords.categoryId,
 			id: `${categoryWords.categoryId}${wordId++}`,
-			word: word.name
+			word: word.name,
+			hint: word.hint,
 		}));
 	});
 	wordId = 0;
 	return words;
+};
+
+export const getRandomisedWordByCategory = (categoryId: string): WordData => {
+	const allWords = getAllWords();
+	const wordsByCategory = allWords.filter((word) => word.categoryId === categoryId);
+	const randomIdx = getRandomisedNumber(wordsByCategory.length);
+
+	return wordsByCategory[randomIdx];
 };
