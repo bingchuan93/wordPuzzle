@@ -6,13 +6,14 @@ import { RootStackParamList } from '../type';
 import { useFocusEffect } from '@react-navigation/native';
 import { getRandomisedWordByCategory, WordData } from '../data/words';
 import { GameCategoryData, getCategory } from '../data/categories';
-import { Box, Button, HStack, VStack, Text } from 'native-base';
-import { actionWithConfirmation, getRandomisedArray } from '../utils';
+import { Box, Button, HStack, VStack, Text, CloseIcon } from 'native-base';
+import { actionWithConfirmation, getRandomisedArray, getScore } from '../utils';
 import _ from 'lodash';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Alert } from 'react-native';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Game'>;
-type LetterDisplay = {
+export type LetterDisplay = {
 	selectionIdx: number;
 	letter: string;
 };
@@ -159,9 +160,9 @@ function Game({ navigation, route }: Props): JSX.Element {
 				})}
 			</VStack>
 			<Box alignItems="center" w="100%" px="4">
-				{question && question.hint && (
+				{question && (
 					<Text mb="5" mt="1" fontSize="sm" color="text.100">
-						Hint: {question.hint}
+						Hint: {question.hint} {question.word}
 					</Text>
 				)}
 				<HStack mt="5" mb="10" justifyContent="center" flexWrap="wrap">
@@ -195,7 +196,7 @@ function Game({ navigation, route }: Props): JSX.Element {
 							}
 						}}
 					>
-						Exit
+						<CloseIcon color="white" />
 					</Button>
 					<Button
 						bg="primary.500"
@@ -217,6 +218,8 @@ function Game({ navigation, route }: Props): JSX.Element {
 									wordDisplay.forEach((letterDisplay) => (answer += letterDisplay.letter));
 								});
 								console.log(answer);
+								const score = getScore({ questionDisplay, question });
+								Alert.alert(`${score}`);
 							} else {
 								actionWithConfirmation({
 									alertMessage: 'Are you sure you want to skip?',
