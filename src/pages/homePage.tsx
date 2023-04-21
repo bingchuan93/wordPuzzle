@@ -26,6 +26,10 @@ function HomePage({ navigation }: Props): JSX.Element {
 		}
 	}, []);
 
+	const handleChangeUser = () => {
+		navigation.navigate('UserForm');
+	};
+
 	return (
 		<View style={styles.container}>
 			<View>
@@ -57,7 +61,7 @@ function HomePage({ navigation }: Props): JSX.Element {
 							px="2"
 							ml="2"
 							_text={{ color: 'text.500' }}
-							onPress={() => {}}
+							onPress={handleChangeUser}
 						>
 							Edit
 						</Button>
@@ -68,7 +72,7 @@ function HomePage({ navigation }: Props): JSX.Element {
 				</Box>
 				<View style={styles.contentContainer}>
 					<Text fontSize="sm" color="text.100" mb="6">
-						Choose a category to start
+						Select a category
 					</Text>
 					{categories && categories.length ? (
 						<VStack space={4} alignItems="center">

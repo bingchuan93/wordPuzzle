@@ -3,4 +3,6 @@ export type RootStackParamList = {
 	Game: {
 		categoryId: string;
 	};
+	// Modals
+	UserForm: undefined;
 };
