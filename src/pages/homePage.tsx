@@ -6,7 +6,7 @@ import { RootStackParamList } from '../type';
 import { StyleSheet } from 'react-native';
 import { GameCategoryData, getCategories } from '../data/categories';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../redux/hooks';
 import { open } from '../redux/modal';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomePage'>;
@@ -14,7 +14,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'HomePage'>;
 function HomePage({ navigation }: Props): JSX.Element {
 	const [categories, setCategories] = useState<GameCategoryData[] | null>([]);
 	const inset = useSafeAreaInsets();
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		const categories = getCategories();

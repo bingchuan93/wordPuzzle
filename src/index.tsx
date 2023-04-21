@@ -24,7 +24,9 @@ function App(): JSX.Element {
 				700: '#408ADD',
 			},
 			danger: {
+				300: '#E7774B',
 				500: '#DE541E',
+				700: '#C54B1B',
 			},
 			warning: {
 				500: '#F4E76Eƒ',
