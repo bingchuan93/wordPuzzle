@@ -6,22 +6,26 @@ import { RootStackParamList } from '../type';
 import { StyleSheet } from 'react-native';
 import { GameCategoryData, getCategories } from '../data/categories';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { open } from '../redux/modal';
+import { useAppSelector } from '../redux/hooks';
 import { selectUser } from '../redux/user';
-import { DEFAULT_USERNAME } from '../constants';
-import UserForm from '../components/modal/custom/userForm';
+import { AS_KEYS, DEFAULT_USERNAME } from '../constants';
+import UserForm, { UserFormMode } from '../components/modal/custom/userForm';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomePage'>;
 
 function HomePage({ navigation }: Props): JSX.Element {
 	const [categories, setCategories] = useState<GameCategoryData[] | null>([]);
-	const [isChangingUser, setIsChangingUser] = useState<boolean>(true);
+	const [isChangingUser, setIsChangingUser] = useState<boolean>(false);
+	const [userChangeMode, setUserChangeMode] = useState<UserFormMode>(UserFormMode.CHANGE);
 	const inset = useSafeAreaInsets();
 	const user = useAppSelector(selectUser);
-	const dispatch = useAppDispatch();
 
 	useEffect(() => {
+		if (user.username === '') {
+			setUserChangeMode(UserFormMode.NEW);
+			setIsChangingUser(true);
+		}
 		const categories = getCategories();
 		if (categories) {
 			setCategories(categories);
@@ -107,19 +111,20 @@ function HomePage({ navigation }: Props): JSX.Element {
 							</View>
 						)}
 					</View>
+					<Button
+						mt="4"
+						onPress={() => {
+							AsyncStorage.clear();
+						}}
+					>
+						Clear (to remove)
+					</Button>
 				</View>
-				<Button
-					style={{ marginBottom: inset.bottom }}
-					onPress={() => {
-						dispatch(open({ props: {} }));
-						// BCWEE navigate to leader board modal
-						// navigation.push('Game');
-					}}
-				>
+				<Button style={{ marginBottom: inset.bottom }} onPress={() => navigation.push('Leaderboard')}>
 					Leaders Board
 				</Button>
 			</View>
-			<UserForm isOpen={isChangingUser} onClose={() => setIsChangingUser(false)} />
+			<UserForm isOpen={isChangingUser} onClose={() => setIsChangingUser(false)} mode={userChangeMode} />
 		</>
 	);
 }

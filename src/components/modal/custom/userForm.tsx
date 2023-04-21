@@ -1,16 +1,23 @@
 import { Button, Input, Text } from 'native-base';
 import { useState } from 'react';
 import { useAppDispatch } from '../../../redux/hooks';
+import { open } from '../../../redux/modal';
 import { changeUser } from '../../../redux/user';
 import { getUserHighScore } from '../../../utils';
 import ModalBase from '../base';
 
+export enum UserFormMode {
+	CHANGE = 'CHANGE',
+	NEW = 'NEW',
+}
+
 type Props = {
 	isOpen: boolean;
 	onClose: () => void;
+	mode: UserFormMode;
 };
 
-const UserForm = ({ isOpen, onClose }: Props): JSX.Element => {
+const UserForm = ({ isOpen, onClose, mode }: Props): JSX.Element => {
 	const [name, setName] = useState<string>('');
 	const [isChangingUser, setIsChangingUser] = useState<boolean>(false);
 	const dispatch = useAppDispatch();
@@ -22,8 +29,29 @@ const UserForm = ({ isOpen, onClose }: Props): JSX.Element => {
 
 	const handleChange = async () => {
 		setIsChangingUser(true);
+		if (name === '') {
+			dispatch(
+				open({
+					title: 'No User Name',
+					message: 'Anonymous players will not have accumulated high score, are you sure?',
+					actionText: 'No',
+					closeText: 'Yes',
+					beforeCloseModalCallback: async () => {
+						dispatch(changeUser({ username: name, highScore: 0 }));
+						resetForm();
+						onClose();
+					},
+				}),
+			);
+		} else {
+			doChangeUser();
+		}
+	};
+
+	const doChangeUser = async () => {
 		const highScore = await getUserHighScore(name);
 		dispatch(changeUser({ username: name, highScore }));
+		resetForm();
 		onClose();
 	};
 
@@ -40,10 +68,18 @@ const UserForm = ({ isOpen, onClose }: Props): JSX.Element => {
 			onClose={handleClose}
 			content={
 				<>
-					<Input placeholder="Enter Name" w="100%" value={name} onChangeText={(text) => setName(text)} />
-					<Text mt="1" textAlign="center" fontSize="2xs" color="text.100">
-						Changing names will also change your high score
-					</Text>
+					<Input
+						isRequired={true}
+						placeholder="Enter Name"
+						w="100%"
+						value={name}
+						onChangeText={(text) => setName(text)}
+					/>
+					{mode === UserFormMode.CHANGE && (
+						<Text mt="1" textAlign="center" fontSize="2xs" color="text.100">
+							Changing names will also change your high score
+						</Text>
+					)}
 				</>
 			}
 			footerButtons={[

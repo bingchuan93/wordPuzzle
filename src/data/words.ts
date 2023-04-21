@@ -110,12 +110,14 @@ export const getAllWords = (): WordData[] => {
 	return words;
 };
 
-export const getRandomisedWordByCategory = (categoryId: string, playedWordIds: string[]): WordData => {
+export const getRandomisedWordByCategory = (
+	categoryId: string,
+	playedWordIds: string[],
+): { word: WordData; hasMore: boolean } => {
 	const allWords = getAllWords();
-	const wordsByCategory = allWords.filter(
-		(word) => word.categoryId === categoryId && !playedWordIds.includes(word.id),
-	);
+	const wordsByCategory = allWords.filter((word) => word.categoryId === categoryId);
+	const unplayedWords = wordsByCategory.filter((word) => !playedWordIds.includes(word.id));
 	const randomIdx = getRandomisedNumber(wordsByCategory.length);
 
-	return wordsByCategory[randomIdx];
+	return { word: unplayedWords[randomIdx], hasMore: playedWordIds.length !== unplayedWords.length - 1 };
 };

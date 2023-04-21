@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { DEFAULT_USERNAME } from '../constants';
 import type { RootState } from './index';
 
 interface UserState {
@@ -7,7 +8,7 @@ interface UserState {
 }
 
 const initialState: UserState = {
-	username: 'Anonymous',
+	username: DEFAULT_USERNAME,
 	highScore: 0,
 };
 

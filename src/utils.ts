@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert, AlertButton } from 'react-native';
-import { AS_KEYS } from './constants';
+import { AS_KEYS, DEFAULT_USERNAME } from './constants';
 import { WordData } from './data/words';
 import { LetterDisplay } from './pages/game';
 import { AsyncStorageReturnType, HighScoreRecord, PromiseReturnType } from './type';
@@ -109,7 +109,7 @@ export const getFromAS = async <T>(key: string): Promise<AsyncStorageReturnType<
 				resolve({ success: false });
 			}
 			try {
-				resolve({ success: true, result: result ? JSON.parse(result) : {} });
+				resolve({ success: true, result: JSON.parse(result as string) });
 			} catch (e) {
 				resolve({ success: true });
 			}
@@ -123,16 +123,27 @@ export const saveToAS = async (key: string, data: any): Promise<AsyncStorageRetu
 	});
 };
 
+export const getAnonymousUserName = async (): Promise<string> => {
+	const res = await getFromAS<number>(AS_KEYS.ANONYMOUS_IDX);
+	let idx = 0;
+	if (res && res.success && res.result) {
+		idx = res.result;
+	}
+	await saveToAS(AS_KEYS.ANONYMOUS_IDX, idx + 1);
+	return `${DEFAULT_USERNAME} ${idx}`;
+};
+
 export const saveHighScore = async (username: string, incomingHighScore: number): Promise<boolean> => {
 	const highScoreRes = await getFromAS<HighScoreRecord>(AS_KEYS.USER_HIGH_SCORE);
+	let name = username || (await getAnonymousUserName());
 	let highScore: HighScoreRecord = {};
 	if (highScoreRes.success && highScoreRes.result) {
 		highScore = highScoreRes.result;
-		if (highScore && highScore[username] && highScore[username] < incomingHighScore) {
-			highScore[username] = incomingHighScore;
+		if (highScore && ((highScore[name] && highScore[name] < incomingHighScore) || !highScore[name])) {
+			highScore[name] = incomingHighScore;
 		}
 	} else {
-		highScore[username] = incomingHighScore;
+		highScore[name] = incomingHighScore;
 	}
 	const result = await saveToAS(AS_KEYS.USER_HIGH_SCORE, highScore);
 	return result.success;

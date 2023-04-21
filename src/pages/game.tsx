@@ -33,6 +33,7 @@ function Game({ navigation, route }: Props): JSX.Element {
 	const [letterSelection, setLetterSelection] = useState<LetterSelection[]>([]);
 	const [noOfSkips, setNoOfSkips] = useState<number>(0);
 	const [totalScore, setTotalScore] = useState<number>(0);
+	const [hasMoreWords, setHasMoreWords] = useState<boolean>(true);
 	const insets = useSafeAreaInsets();
 	const dispatch = useAppDispatch();
 	const user = useAppSelector(selectUser);
@@ -58,9 +59,10 @@ function Game({ navigation, route }: Props): JSX.Element {
 	};
 
 	const initGame = () => {
-		const randomWord = getRandomisedWordByCategory(categoryId, playedQuestionIds);
+		const { word: randomWord, hasMore } = getRandomisedWordByCategory(categoryId, playedQuestionIds);
 		randomWord.word = randomWord.word.toLocaleUpperCase();
 		setQuestion(randomWord);
+		setHasMoreWords(hasMore);
 		const { word } = randomWord;
 		const letterSelection = [];
 		const questionDisplay = [];
@@ -168,7 +170,7 @@ function Game({ navigation, route }: Props): JSX.Element {
 		);
 	};
 
-	const handleCompleteGame = () => {
+	const handleCompleteGame = async () => {
 		let answer = '';
 		questionDisplay.map((wordDisplay, idx) => {
 			if (idx != 0) {
@@ -193,23 +195,35 @@ function Game({ navigation, route }: Props): JSX.Element {
 			const clonedQuestionIds = [...playedQuestionIds];
 			clonedQuestionIds.push(question.id);
 			setPlayedQuestionIds(clonedQuestionIds);
-			// BCWEE save high score
-			saveHighScore(user.username, newTotalScore);
+
+			console.log(user);
+			await saveHighScore(user.username, newTotalScore);
 			dispatch(setHighScore(newTotalScore));
-			dispatch(
-				open({
-					title: 'Congratulations!',
-					message: `You got it! You current score is ${newTotalScore}. Would you like to continue?`,
-					actionText: 'Continue',
-					actionCallback: () => initGame(),
-					closeText: 'Exit',
-					beforeCloseModalCallback: () => navigation.goBack(),
-				}),
-			);
+
+			if (hasMoreWords) {
+				dispatch(
+					open({
+						title: 'Congratulations!',
+						message: `You got it! You current score is ${newTotalScore}. Would you like to continue?`,
+						actionText: 'Continue',
+						actionCallback: () => initGame(),
+						closeText: 'Exit',
+						beforeCloseModalCallback: () => navigation.goBack(),
+					}),
+				);
+			} else {
+				dispatch(
+					open({
+						title: 'Congratulations!',
+						message: `You got it! You total score is ${newTotalScore}. Try a harder category or beat your current score!`,
+						actionText: "Let's Go!",
+						actionCallback: () => navigation.goBack(),
+					}),
+				);
+			}
 		}
 	};
 
-	console.log('BCWEe', question);
 	return (
 		<Box pt="128px" pb={`${insets.bottom}px`} style={{ flex: 1, justifyContent: 'space-between' }}>
 			<VStack alignItems="center">
