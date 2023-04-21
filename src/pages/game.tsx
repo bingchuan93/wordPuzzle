@@ -31,9 +31,9 @@ function Game({ navigation, route }: Props): JSX.Element {
 	const insets = useSafeAreaInsets();
 
 	useEffect(() => {
-		const word = initData();
-		if (word) {
-			initGame(word);
+		if (categoryId) {
+			initData();
+			initGame();
 		}
 	}, []);
 
@@ -46,21 +46,18 @@ function Game({ navigation, route }: Props): JSX.Element {
 	console.log('BCWEE', { isCompleted });
 
 	const initData = () => {
-		if (categoryId) {
-			const category = getCategory(categoryId);
-			if (category) {
-				setCategory(category);
-				navigation.setOptions({ title: category.name });
-				const randomWord = getRandomisedWordByCategory(category.id);
-				randomWord.word = randomWord.word.toLocaleUpperCase();
-				setQuestion(randomWord);
-				return randomWord;
-			}
+		const category = getCategory(categoryId);
+		if (category) {
+			setCategory(category);
+			navigation.setOptions({ title: category.name });
 		}
 	};
 
-	const initGame = (question: WordData) => {
-		const { word } = question;
+	const initGame = () => {
+		const randomWord = getRandomisedWordByCategory(categoryId);
+		randomWord.word = randomWord.word.toLocaleUpperCase();
+		setQuestion(randomWord);
+		const { word } = randomWord;
 		const letterSelection = [];
 		const questionDisplay = [];
 		let wordDisplay = [];
@@ -182,18 +179,7 @@ function Game({ navigation, route }: Props): JSX.Element {
 						bg="danger.500"
 						_text={{ color: 'white' }}
 						onPress={() => {
-							if (isCompleted) {
-								let answer = '';
-								questionDisplay.map((wordDisplay, idx) => {
-									if (idx != 0) {
-										answer += ' ';
-									}
-									wordDisplay.forEach((letterDisplay) => (answer += letterDisplay.letter));
-								});
-								console.log(answer);
-							} else {
-								navigation.goBack();
-							}
+							navigation.goBack();
 						}}
 					>
 						<CloseIcon color="white" />
@@ -225,7 +211,7 @@ function Game({ navigation, route }: Props): JSX.Element {
 									alertMessage: 'Are you sure you want to skip?',
 									confirmationText: 'Skip',
 									confirmationAction: () => {
-										navigation.goBack();
+										initGame();
 									},
 								});
 							}

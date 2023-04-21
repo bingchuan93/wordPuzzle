@@ -1,14 +1,9 @@
 import React from 'react';
-import { NativeBaseProvider, extendTheme, View } from 'native-base';
+import { NativeBaseProvider, extendTheme } from 'native-base';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import HomePage from './pages/homePage';
-import Game from './pages/game';
-import { RootStackParamList } from './type';
-import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Root from './root';
 
 function App(): JSX.Element {
 	const theme = extendTheme({
@@ -42,14 +37,7 @@ function App(): JSX.Element {
 		<SafeAreaProvider>
 			<NativeBaseProvider theme={theme}>
 				<NavigationContainer>
-					<Stack.Navigator initialRouteName="HomePage">
-						<Stack.Screen name="HomePage" component={HomePage} options={{ title: 'Welcome' }} />
-						<Stack.Screen
-							name="Game"
-							component={Game}
-							options={{ gestureEnabled: true, headerBackVisible: false }}
-						/>
-					</Stack.Navigator>
+					<Root />
 				</NavigationContainer>
 			</NativeBaseProvider>
 		</SafeAreaProvider>
