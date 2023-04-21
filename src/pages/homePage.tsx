@@ -8,9 +8,10 @@ import { GameCategoryData, getCategories } from '../data/categories';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppSelector } from '../redux/hooks';
 import { selectUser } from '../redux/user';
-import { AS_KEYS, DEFAULT_USERNAME } from '../constants';
+import { DEFAULT_USERNAME } from '../constants';
 import UserForm, { UserFormMode } from '../components/modal/custom/userForm';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Share from 'react-native-share';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomePage'>;
 
@@ -32,13 +33,17 @@ function HomePage({ navigation }: Props): JSX.Element {
 		}
 	}, []);
 
+	useEffect(() => {
+		setUserChangeMode(user.username === '' ? UserFormMode.NEW : UserFormMode.CHANGE);
+	}, [user]);
+
 	const handleChangeUser = () => {
 		setIsChangingUser(true);
 	};
 
 	return (
 		<>
-			<View style={styles.container}>
+			<View style={[styles.container, { marginBottom: inset.bottom }]}>
 				<View>
 					<Box
 						p="2"
@@ -114,13 +119,21 @@ function HomePage({ navigation }: Props): JSX.Element {
 					<Button
 						mt="4"
 						onPress={() => {
-							AsyncStorage.clear();
+							// AsyncStorage.clear();
+
+							Share.open({ title: 'TEst title', message: 'testmessage' })
+								.then((res) => {
+									console.log(res);
+								})
+								.catch((err) => {
+									err && console.log(err);
+								});
 						}}
 					>
 						Clear (to remove)
 					</Button>
 				</View>
-				<Button style={{ marginBottom: inset.bottom }} onPress={() => navigation.push('Leaderboard')}>
+				<Button mb="4" onPress={() => navigation.push('Leaderboard')}>
 					Leaders Board
 				</Button>
 			</View>
