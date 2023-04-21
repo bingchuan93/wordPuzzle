@@ -15,6 +15,10 @@ export const userSlice = createSlice({
 	name: 'user',
 	initialState,
 	reducers: {
+		changeUser: (state, action: PayloadAction<UserState>) => {
+			state.username = action.payload.username;
+			state.highScore = action.payload.highScore;
+		},
 		setUser: (state, action: PayloadAction<UserState['username']>) => {
 			state.username = action.payload;
 		},
@@ -26,6 +30,6 @@ export const userSlice = createSlice({
 	},
 });
 
-export const { setUser, setScore } = userSlice.actions;
+export const { setUser, setScore, changeUser } = userSlice.actions;
 export const selectUser = (state: RootState) => state.user;
 export default userSlice.reducer;

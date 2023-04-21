@@ -1,6 +1,9 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert, AlertButton } from 'react-native';
+import { AS_KEYS } from './constants';
 import { WordData } from './data/words';
 import { LetterDisplay } from './pages/game';
+import { AsyncStorageReturnType, HighScoreRecord, PromiseReturnType } from './type';
 
 export const getRandomisedNumber = (maxNumber: number) => {
 	const ts = new Date().getTime();
@@ -97,4 +100,55 @@ export const getScore = ({
 		WordComplexityScoreTier[questionDisplay[wordIdx].length as number] ?? WordComplexityScoreTier[18];
 
 	return Math.floor(score * noOfWordsModifier * wordComplexityModifier);
+};
+
+export const getFromAS = async <T>(key: string): Promise<AsyncStorageReturnType<T>> => {
+	return new Promise((resolve) => {
+		AsyncStorage.getItem(key, (error, result) => {
+			if (error) {
+				resolve({ success: false });
+			}
+			try {
+				resolve({ success: true, result: result ? JSON.parse(result) : {} });
+			} catch (e) {
+				resolve({ success: true });
+			}
+		});
+	});
+};
+
+export const saveToAS = async (key: string, data: any): Promise<AsyncStorageReturnType<undefined>> => {
+	return new Promise((resolve) => {
+		AsyncStorage.setItem(key, JSON.stringify(data), (error) => resolve({ success: error ? false : true }));
+	});
+};
+
+export const saveHighScore = async (username: string, incomingHighScore: number): Promise<boolean> => {
+	const highScoreRes = await getFromAS<HighScoreRecord>(AS_KEYS.USER_HIGH_SCORE);
+	let highScore: HighScoreRecord = {};
+	if (highScoreRes.success && highScoreRes.result) {
+		highScore = highScoreRes.result;
+		if (highScore && highScore[username] && highScore[username] < incomingHighScore) {
+			highScore[username] = incomingHighScore;
+		}
+	} else {
+		highScore[username] = incomingHighScore;
+	}
+	const result = await saveToAS(AS_KEYS.USER_HIGH_SCORE, highScore);
+	return result.success;
+};
+
+export const getAllHighScore = async (): Promise<HighScoreRecord | undefined> => {
+	const highScoreRes = await getFromAS<HighScoreRecord>(AS_KEYS.USER_HIGH_SCORE);
+	if (highScoreRes.success && highScoreRes.result) {
+		return highScoreRes.result;
+	}
+};
+
+export const getUserHighScore = async (username: string): Promise<number> => {
+	const highScoreRes = await getFromAS<HighScoreRecord>(AS_KEYS.USER_HIGH_SCORE);
+	if (highScoreRes.success && highScoreRes.result) {
+		return highScoreRes.result[username] || 0;
+	}
+	return 0;
 };
