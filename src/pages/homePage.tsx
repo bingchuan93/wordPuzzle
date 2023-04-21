@@ -7,9 +7,10 @@ import { StyleSheet } from 'react-native';
 import { GameCategoryData, getCategories } from '../data/categories';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { open } from '../redux/modal';
+import { open, openCustomComponent } from '../redux/modal';
 import { selectUser, setUser } from '../redux/user';
 import { DEFAULT_USERNAME } from '../constants';
+import { CUSTOM_MODAL_TYPES } from '../components/modal/types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomePage'>;
 
@@ -27,7 +28,7 @@ function HomePage({ navigation }: Props): JSX.Element {
 	}, []);
 
 	const handleChangeUser = () => {
-		navigation.navigate('UserForm');
+		dispatch(openCustomComponent(CUSTOM_MODAL_TYPES.USER_FORM));
 	};
 
 	return (

@@ -4,7 +4,7 @@ import { RootStackParamList } from './type';
 
 import HomePage from './pages/homePage';
 import Game from './pages/game';
-import UserForm from './pages/modals/userForm';
+import UserForm from './pages/routeModals/userForm';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
