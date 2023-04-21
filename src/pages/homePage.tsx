@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
-import { Box, Button, Center, VStack } from 'native-base';
+import { View } from 'react-native';
+import { Box, Button, VStack } from 'native-base';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../type';
 import { StyleSheet } from 'react-native';

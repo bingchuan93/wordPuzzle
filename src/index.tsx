@@ -34,6 +34,10 @@ function App(): JSX.Element {
 			bg: {
 				500: '#E0D8DE',
 			},
+			success: {
+				500: '#23CE6B',
+				700: '#1EAE5A',
+			},
 		},
 	});
 

@@ -110,9 +110,11 @@ export const getAllWords = (): WordData[] => {
 	return words;
 };
 
-export const getRandomisedWordByCategory = (categoryId: string): WordData => {
+export const getRandomisedWordByCategory = (categoryId: string, playedWordIds: string[]): WordData => {
 	const allWords = getAllWords();
-	const wordsByCategory = allWords.filter((word) => word.categoryId === categoryId);
+	const wordsByCategory = allWords.filter(
+		(word) => word.categoryId === categoryId && !playedWordIds.includes(word.id),
+	);
 	const randomIdx = getRandomisedNumber(wordsByCategory.length);
 
 	return wordsByCategory[randomIdx];

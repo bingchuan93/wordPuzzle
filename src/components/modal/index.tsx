@@ -5,14 +5,7 @@ import { close, selectModal } from '../../redux/modal';
 
 function Modal() {
 	const { isOpen, props } = useAppSelector(selectModal);
-	const {
-		title = 'Test',
-		message = 'asdkajsdklfjweiojf asjdflkadsjflkasdjfo aosidjfodijf',
-		beforeCloseModalCallback,
-		closeText = 'Close',
-		actionModalCallback,
-		actionText,
-	} = props;
+	const { title, message, beforeCloseModalCallback, closeText, actionCallback, actionText } = props;
 	const dispatch = useAppDispatch();
 
 	const handleClose = () => {
@@ -23,8 +16,8 @@ function Modal() {
 	};
 
 	const handleAction = () => {
-		if (actionModalCallback) {
-			actionModalCallback();
+		if (actionCallback) {
+			actionCallback();
 		}
 		dispatch(close());
 	};
@@ -34,12 +27,12 @@ function Modal() {
 	}, [closeText, actionText]);
 
 	return (
-		<NBModal isOpen={isOpen} onClose={() => dispatch(close())}>
+		<NBModal isOpen={isOpen} onClose={handleClose}>
 			<NBModal.Content maxWidth="400px">
 				<NBModal.CloseButton />
 				{title && <NBModal.Header borderBottomWidth={0}>{title}</NBModal.Header>}
 				<NBModal.Body>
-					<Text>{message}</Text>
+					<Text textAlign="center">{message}</Text>
 				</NBModal.Body>
 				<NBModal.Footer borderTopWidth={0}>
 					<HStack flex="1">

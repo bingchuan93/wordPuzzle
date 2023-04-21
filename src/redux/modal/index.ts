@@ -8,7 +8,7 @@ interface ModalState {
 		message?: string;
 		beforeCloseModalCallback?: Function;
 		closeText?: string;
-		actionModalCallback?: Function;
+		actionCallback?: Function;
 		actionText?: string;
 	};
 }
@@ -28,7 +28,6 @@ export const modalSlice = createSlice({
 		},
 		close: (state) => {
 			state.isOpen = false;
-			state.props = initialState.props;
 		},
 	},
 });

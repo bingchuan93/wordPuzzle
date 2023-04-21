@@ -11,6 +11,8 @@ import { actionWithConfirmation, getRandomisedArray, getScore } from '../utils';
 import _ from 'lodash';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Alert } from 'react-native';
+import { useAppDispatch } from '../redux/hooks';
+import { open } from '../redux/modal';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Game'>;
 export type LetterDisplay = {
@@ -24,11 +26,15 @@ type LetterSelection = {
 
 function Game({ navigation, route }: Props): JSX.Element {
 	const { categoryId } = route.params;
+	const [playedQuestionIds, setPlayedQuestionIds] = useState<string[]>([]);
 	const [question, setQuestion] = useState<WordData | null>(null);
 	const [category, setCategory] = useState<GameCategoryData | null>(null);
 	const [questionDisplay, setQuestionDisplay] = useState<LetterDisplay[][]>([]);
 	const [letterSelection, setLetterSelection] = useState<LetterSelection[]>([]);
+	const [noOfSkips, setNoOfSkips] = useState<number>(0);
+	const [totalScore, setTotalScore] = useState<number>(0);
 	const insets = useSafeAreaInsets();
+	const dispatch = useAppDispatch();
 
 	useEffect(() => {
 		if (categoryId) {
@@ -43,8 +49,6 @@ function Game({ navigation, route }: Props): JSX.Element {
 		return lastLetterIdx !== -1 ? questionDisplay[lastWordIdx][lastLetterIdx].selectionIdx !== -1 : false;
 	}, [questionDisplay]);
 
-	console.log('BCWEE', { isCompleted });
-
 	const initData = () => {
 		const category = getCategory(categoryId);
 		if (category) {
@@ -54,7 +58,7 @@ function Game({ navigation, route }: Props): JSX.Element {
 	};
 
 	const initGame = () => {
-		const randomWord = getRandomisedWordByCategory(categoryId);
+		const randomWord = getRandomisedWordByCategory(categoryId, playedQuestionIds);
 		randomWord.word = randomWord.word.toLocaleUpperCase();
 		setQuestion(randomWord);
 		const { word } = randomWord;
@@ -133,6 +137,74 @@ function Game({ navigation, route }: Props): JSX.Element {
 		letterSelection.isSelected = false;
 	};
 
+	const handleExitGame = () => {
+		dispatch(
+			open({
+				title: 'Quit Game',
+				message:
+					"Your current game's progress will not be saved. Your previous score will be taken instead. Are you sure?",
+				closeText: 'Quit',
+				beforeCloseModalCallback: () => {
+					// BCWEE include saving score
+					navigation.goBack();
+				},
+				actionText: 'Stay',
+			}),
+		);
+	};
+
+	const handleSkipGame = () => {
+		dispatch(
+			open({
+				title: 'Skip Current Game',
+				message: 'You will received -1 point if you skip this game. Are you sure?',
+				closeText: 'Skip',
+				beforeCloseModalCallback: () => {
+					initGame();
+					setNoOfSkips(noOfSkips + 1);
+				},
+				actionText: 'Resume',
+			}),
+		);
+	};
+
+	const handleCompleteGame = () => {
+		let answer = '';
+		questionDisplay.map((wordDisplay, idx) => {
+			if (idx != 0) {
+				answer += ' ';
+			}
+			wordDisplay.forEach((letterDisplay) => (answer += letterDisplay.letter));
+		});
+		console.log(answer);
+		const score = getScore({ questionDisplay, question, noOfSkips });
+		if (score === 0) {
+			// BCWEE save high score
+			dispatch(
+				open({
+					title: 'Oh no!',
+					message: `You've got the wrong answer. Your higest score is ${totalScore}`,
+					actionText: 'Return to main page',
+					actionCallback: () => navigation.goBack(),
+					beforeCloseModalCallback: () => navigation.goBack(),
+				}),
+			);
+		} else {
+			const newTotalScore = totalScore + score;
+			const clonedQuestionIds = [...playedQuestionIds];
+			clonedQuestionIds.push(question.id);
+			setPlayedQuestionIds(clonedQuestionIds);
+			dispatch(
+				open({
+					title: 'Congratulations!',
+					message: `You got it! You current score is ${newTotalScore}. Would you like to continue?`,
+					actionText: 'Continue',
+					closeText: 'Exit',
+				}),
+			);
+		}
+	};
+
 	console.log('BCWEe', question);
 	return (
 		<Box pt="128px" pb={`${insets.bottom}px`} style={{ flex: 1, justifyContent: 'space-between' }}>
@@ -175,45 +247,24 @@ function Game({ navigation, route }: Props): JSX.Element {
 					})}
 				</HStack>
 				<HStack w="100%">
-					<Button
-						bg="danger.500"
-						_text={{ color: 'white' }}
-						onPress={() => {
-							navigation.goBack();
-						}}
-					>
+					<Button bg="danger.500" _text={{ color: 'white' }} onPress={handleExitGame}>
 						<CloseIcon color="white" />
 					</Button>
 					<Button
-						bg="primary.500"
+						bg={`${isCompleted ? 'success' : 'primary'}.500`}
 						rounded="xs"
 						shadow={3}
 						_text={{
 							color: 'white',
 						}}
-						_pressed={{ bg: 'primary.700' }}
+						_pressed={{ bg: `${isCompleted ? 'success' : 'primary'}.700` }}
 						ml="4"
 						flex="1"
 						onPress={() => {
 							if (isCompleted) {
-								let answer = '';
-								questionDisplay.map((wordDisplay, idx) => {
-									if (idx != 0) {
-										answer += ' ';
-									}
-									wordDisplay.forEach((letterDisplay) => (answer += letterDisplay.letter));
-								});
-								console.log(answer);
-								const score = getScore({ questionDisplay, question });
-								Alert.alert(`${score}`);
+								handleCompleteGame();
 							} else {
-								actionWithConfirmation({
-									alertMessage: 'Are you sure you want to skip?',
-									confirmationText: 'Skip',
-									confirmationAction: () => {
-										initGame();
-									},
-								});
+								handleSkipGame();
 							}
 						}}
 					>
