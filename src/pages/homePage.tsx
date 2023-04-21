@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { Box, Button, VStack } from 'native-base';
+import { Box, Button, Input, VStack, Text, Center } from 'native-base';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../type';
 import { StyleSheet } from 'react-native';
 import { GameCategoryData, getCategories } from '../data/categories';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useAppDispatch } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { open } from '../redux/modal';
+import { selectUser, setUser } from '../redux/user';
+import { DEFAULT_USERNAME } from '../constants';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomePage'>;
 
 function HomePage({ navigation }: Props): JSX.Element {
 	const [categories, setCategories] = useState<GameCategoryData[] | null>([]);
 	const inset = useSafeAreaInsets();
+	const user = useAppSelector(selectUser);
 	const dispatch = useAppDispatch();
 
 	useEffect(() => {
@@ -42,8 +45,31 @@ function HomePage({ navigation }: Props): JSX.Element {
 				>
 					Word Puzzle
 				</Box>
+				<Box w="100%" flexDirection="row" justifyContent="space-between" alignItems="center" mb="6">
+					<Box flexDirection="row" alignItems="center">
+						<Text fontSize="md" color="text.500">
+							Hi, {user.username || DEFAULT_USERNAME}
+						</Text>
+						<Button
+							variant="outline"
+							size="xs"
+							py="1"
+							px="2"
+							ml="2"
+							_text={{ color: 'text.500' }}
+							onPress={() => {}}
+						>
+							Edit
+						</Button>
+					</Box>
+					<Text fontSize="2xs" color="text.100">
+						Best Score: <Text bold>{user.highScore}</Text>
+					</Text>
+				</Box>
 				<View style={styles.contentContainer}>
-					<Box mb="6">Choose a category to start</Box>
+					<Text fontSize="sm" color="text.100" mb="6">
+						Choose a category to start
+					</Text>
 					{categories && categories.length ? (
 						<VStack space={4} alignItems="center">
 							{categories.map((category) => {

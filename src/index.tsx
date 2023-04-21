@@ -3,7 +3,8 @@ import { NativeBaseProvider, extendTheme } from 'native-base';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider as ReduxProvider } from 'react-redux';
-import store from './redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import store, { persistor } from './redux';
 
 import Root from './root';
 
@@ -45,9 +46,11 @@ function App(): JSX.Element {
 		<SafeAreaProvider>
 			<NativeBaseProvider theme={theme}>
 				<ReduxProvider store={store}>
-					<NavigationContainer>
-						<Root />
-					</NavigationContainer>
+					<PersistGate loading={null} persistor={persistor}>
+						<NavigationContainer>
+							<Root />
+						</NavigationContainer>
+					</PersistGate>
 				</ReduxProvider>
 			</NativeBaseProvider>
 		</SafeAreaProvider>
