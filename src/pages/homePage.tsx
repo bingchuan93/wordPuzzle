@@ -6,12 +6,15 @@ import { RootStackParamList } from '../type';
 import { StyleSheet } from 'react-native';
 import { GameCategoryData, getCategories } from '../data/categories';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useDispatch } from 'react-redux';
+import { open } from '../redux/modal';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomePage'>;
 
 function HomePage({ navigation }: Props): JSX.Element {
 	const [categories, setCategories] = useState<GameCategoryData[] | null>([]);
 	const inset = useSafeAreaInsets();
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		const categories = getCategories();
@@ -75,6 +78,7 @@ function HomePage({ navigation }: Props): JSX.Element {
 			<Button
 				style={{ marginBottom: inset.bottom }}
 				onPress={() => {
+					dispatch(open({ props: {} }));
 					// BCWEE navigate to leader board modal
 					// navigation.push('Game');
 				}}

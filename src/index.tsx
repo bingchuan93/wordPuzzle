@@ -1,8 +1,10 @@
 import React from 'react';
 import { NativeBaseProvider, extendTheme } from 'native-base';
-import { NavigationContainer } from '@react-navigation/native';
-
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { NavigationContainer } from '@react-navigation/native';
+import { Provider as ReduxProvider } from 'react-redux';
+import store from './redux';
+
 import Root from './root';
 
 function App(): JSX.Element {
@@ -36,9 +38,11 @@ function App(): JSX.Element {
 	return (
 		<SafeAreaProvider>
 			<NativeBaseProvider theme={theme}>
-				<NavigationContainer>
-					<Root />
-				</NavigationContainer>
+				<ReduxProvider store={store}>
+					<NavigationContainer>
+						<Root />
+					</NavigationContainer>
+				</ReduxProvider>
 			</NativeBaseProvider>
 		</SafeAreaProvider>
 	);

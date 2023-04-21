@@ -1,10 +1,13 @@
-import { useState } from 'react';
 import { Modal as NBModal, Text, Button } from 'native-base';
+import { useDispatch, useSelector } from 'react-redux';
+import { close } from '../../redux/modal';
 
 function Modal() {
-	const [showModal, setShowModal] = useState<boolean>(true);
+	const isOpen = useSelector((state) => state.modal.isOpen);
+	const dispatch = useDispatch();
+
 	return (
-		<NBModal isOpen={showModal} onClose={() => setShowModal(false)}>
+		<NBModal isOpen={isOpen} onClose={() => dispatch(close())}>
 			<NBModal.Content maxWidth="400px">
 				<NBModal.CloseButton />
 				<NBModal.Header>Contact Us</NBModal.Header>
@@ -17,14 +20,14 @@ function Modal() {
 							variant="ghost"
 							colorScheme="blueGray"
 							onPress={() => {
-								setShowModal(false);
+								dispatch(close());
 							}}
 						>
 							Cancel
 						</Button>
 						<Button
 							onPress={() => {
-								setShowModal(false);
+								dispatch(close());
 							}}
 						>
 							Save
