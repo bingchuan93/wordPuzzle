@@ -4,7 +4,7 @@ import { RootStackParamList } from './type';
 
 import HomePage from './pages/homePage';
 import Game from './pages/game';
-import UserForm from './pages/routeModals/userForm';
+import Leaderboard from './pages/routeModals/leaderboard';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -20,7 +20,7 @@ function Root(): JSX.Element {
 				/>
 			</Stack.Group>
 			<Stack.Group screenOptions={{ presentation: 'modal' }}>
-				<Stack.Screen name="UserForm" component={UserForm} options={{ title: 'User Profile' }} />
+				<Stack.Screen name="Leaderboard" component={Leaderboard} options={{ title: 'Leaderboard' }} />
 			</Stack.Group>
 		</Stack.Navigator>
 	);

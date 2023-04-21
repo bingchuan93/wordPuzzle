@@ -4,5 +4,5 @@ export type RootStackParamList = {
 		categoryId: string;
 	};
 	// Modals
-	UserForm: undefined;
+	Leaderboard: undefined;
 };

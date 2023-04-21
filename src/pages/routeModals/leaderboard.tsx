@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootStackParamList } from '../../type';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'UserForm'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'Leaderboard'>;
 
-function UserForm({ navigation }: Props): JSX.Element {
+function Leaderboard({ navigation }: Props): JSX.Element {
 	const [name, setName] = useState<string>('');
 	const insets = useSafeAreaInsets();
 
@@ -29,4 +29,4 @@ function UserForm({ navigation }: Props): JSX.Element {
 	);
 }
 
-export default UserForm;
+export default Leaderboard;

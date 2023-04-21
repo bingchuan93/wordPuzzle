@@ -1,6 +1,5 @@
 import { Button, Input, Text } from 'native-base';
 import { useState } from 'react';
-import { useAppDispatch } from '../../redux/hooks';
 import { close } from '../../redux/modal';
 import { setUser } from '../../redux/user';
 import ModalBase from './base';
