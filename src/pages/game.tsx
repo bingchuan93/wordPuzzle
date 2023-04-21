@@ -7,12 +7,13 @@ import { useFocusEffect } from '@react-navigation/native';
 import { getRandomisedWordByCategory, WordData } from '../data/words';
 import { GameCategoryData, getCategory } from '../data/categories';
 import { Box, Button, HStack, VStack, Text, CloseIcon } from 'native-base';
-import { actionWithConfirmation, getRandomisedArray, getScore } from '../utils';
+import { actionWithConfirmation, getRandomisedArray, getScore, saveHighScore } from '../utils';
 import _ from 'lodash';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Alert } from 'react-native';
-import { useAppDispatch } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { open } from '../redux/modal';
+import { selectUser, setHighScore } from '../redux/user';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Game'>;
 export type LetterDisplay = {
@@ -28,13 +29,13 @@ function Game({ navigation, route }: Props): JSX.Element {
 	const { categoryId } = route.params;
 	const [playedQuestionIds, setPlayedQuestionIds] = useState<string[]>([]);
 	const [question, setQuestion] = useState<WordData | null>(null);
-	const [category, setCategory] = useState<GameCategoryData | null>(null);
 	const [questionDisplay, setQuestionDisplay] = useState<LetterDisplay[][]>([]);
 	const [letterSelection, setLetterSelection] = useState<LetterSelection[]>([]);
 	const [noOfSkips, setNoOfSkips] = useState<number>(0);
 	const [totalScore, setTotalScore] = useState<number>(0);
 	const insets = useSafeAreaInsets();
 	const dispatch = useAppDispatch();
+	const user = useAppSelector(selectUser);
 
 	useEffect(() => {
 		if (categoryId) {
@@ -52,7 +53,6 @@ function Game({ navigation, route }: Props): JSX.Element {
 	const initData = () => {
 		const category = getCategory(categoryId);
 		if (category) {
-			setCategory(category);
 			navigation.setOptions({ title: category.name });
 		}
 	};
@@ -179,7 +179,6 @@ function Game({ navigation, route }: Props): JSX.Element {
 		console.log(answer);
 		const score = getScore({ questionDisplay, question, noOfSkips });
 		if (score === 0) {
-			// BCWEE save high score
 			dispatch(
 				open({
 					title: 'Oh no!',
@@ -194,12 +193,17 @@ function Game({ navigation, route }: Props): JSX.Element {
 			const clonedQuestionIds = [...playedQuestionIds];
 			clonedQuestionIds.push(question.id);
 			setPlayedQuestionIds(clonedQuestionIds);
+			// BCWEE save high score
+			saveHighScore(user.username, newTotalScore);
+			dispatch(setHighScore(newTotalScore));
 			dispatch(
 				open({
 					title: 'Congratulations!',
 					message: `You got it! You current score is ${newTotalScore}. Would you like to continue?`,
 					actionText: 'Continue',
+					actionCallback: () => initGame(),
 					closeText: 'Exit',
+					beforeCloseModalCallback: () => navigation.goBack(),
 				}),
 			);
 		}
