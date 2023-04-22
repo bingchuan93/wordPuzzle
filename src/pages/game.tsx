@@ -7,7 +7,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { getRandomisedWordByCategory, WordData } from '../data/words';
 import { GameCategoryData, getCategory } from '../data/categories';
 import { Box, Button, HStack, VStack, Text, CloseIcon } from 'native-base';
-import { actionWithConfirmation, getRandomisedArray, getScore, saveHighScore } from '../utils';
+import { getRandomisedArray, getScore, saveHighScore } from '../utils';
 import _ from 'lodash';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Alert } from 'react-native';
