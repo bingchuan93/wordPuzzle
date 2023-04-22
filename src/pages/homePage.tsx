@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { Box, Button, VStack, Text, ShareIcon } from 'native-base';
+import { Box, Button, VStack, Text, ShareIcon, Center, HStack } from 'native-base';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../type';
 import { StyleSheet } from 'react-native';
@@ -11,6 +11,7 @@ import { selectUser } from '../redux/user';
 import { DEFAULT_USERNAME } from '../constants';
 import UserForm, { UserFormMode } from '../components/modal/custom/userForm';
 import Share from 'react-native-share';
+import DifficultyLevel from '../components/difficultyLevel';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomePage'>;
 
@@ -100,7 +101,7 @@ function HomePage({ navigation }: Props): JSX.Element {
 									return (
 										<Button
 											key={category.id}
-											w="64"
+											w="300px"
 											h="50"
 											bg="primary.500"
 											rounded="xs"
@@ -108,12 +109,14 @@ function HomePage({ navigation }: Props): JSX.Element {
 											_text={{
 												color: 'white',
 											}}
+											color="white"
 											_pressed={{ bg: 'primary.700' }}
-											onPress={() => {
-												navigation.navigate('Game', { categoryId: category.id });
-											}}
+											onPress={() => navigation.navigate('Game', { categoryId: category.id })}
 										>
-											{category.name}
+											<HStack w="270px" justifyContent="space-between" alignItems="center">
+												<Text color="white">{category.name}</Text>
+												<DifficultyLevel level={category.difficultyLevel} />
+											</HStack>
 										</Button>
 									);
 								})}

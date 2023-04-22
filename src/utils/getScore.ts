@@ -58,5 +58,5 @@ export const getScore = ({
 	wordComplexityModifier +=
 		WordComplexityScoreTier[questionDisplay[wordIdx].length as number] ?? WordComplexityScoreTier[18];
 
-	return Math.min(Math.floor(score * noOfWordsModifier * wordComplexityModifier - noOfSkips), 0);
+	return Math.max(Math.floor(score * noOfWordsModifier * wordComplexityModifier - noOfSkips), 0);
 };

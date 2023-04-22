@@ -5,7 +5,7 @@ import { RootStackParamList } from '../type';
 import { useFocusEffect } from '@react-navigation/native';
 import { getRandomisedWordByCategory, WordData } from '../data/words';
 import { getCategory } from '../data/categories';
-import { Box, Button, HStack, VStack, Text, CloseIcon } from 'native-base';
+import { Box, Button, HStack, VStack, Text, CloseIcon, Center } from 'native-base';
 import { getRandomisedArray, getScore, saveHighScore } from '../utils';
 import _ from 'lodash';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -220,27 +220,34 @@ function Game({ navigation, route }: Props): JSX.Element {
 	};
 
 	return (
-		<Box pt="128px" pb={insets.bottom + 4} style={{ flex: 1, justifyContent: 'space-between' }}>
-			<VStack alignItems="center">
-				{questionDisplay.map((wordDisplay, wordDisplayIdx) => {
-					return (
-						<HStack key={wordDisplayIdx} justifyContent="center" mb="5" flexWrap="wrap">
-							{wordDisplay.map((letterDisplay, letterDisplayIdx) => {
-								return (
-									<LetterDisplay
-										key={letterDisplayIdx}
-										{...letterDisplay}
-										idx={letterDisplayIdx}
-										onPress={({ selectionIdx, letterDisplayIdx }) =>
-											handleLetterDeselect({ selectionIdx, letterDisplayIdx, wordDisplayIdx })
-										}
-									/>
-								);
-							})}
-						</HStack>
-					);
-				})}
-			</VStack>
+		<Box pt="64px" pb={insets.bottom + 4} style={{ flex: 1, justifyContent: 'space-between' }}>
+			<Box>
+				<Center mb="64px">
+					<Text>
+						Score: <Text bold>{totalScore}</Text>
+					</Text>
+				</Center>
+				<VStack alignItems="center">
+					{questionDisplay.map((wordDisplay, wordDisplayIdx) => {
+						return (
+							<HStack key={wordDisplayIdx} justifyContent="center" mb="5" flexWrap="wrap">
+								{wordDisplay.map((letterDisplay, letterDisplayIdx) => {
+									return (
+										<LetterDisplay
+											key={letterDisplayIdx}
+											{...letterDisplay}
+											idx={letterDisplayIdx}
+											onPress={({ selectionIdx, letterDisplayIdx }) =>
+												handleLetterDeselect({ selectionIdx, letterDisplayIdx, wordDisplayIdx })
+											}
+										/>
+									);
+								})}
+							</HStack>
+						);
+					})}
+				</VStack>
+			</Box>
 			<Box alignItems="center" w="100%" px="4">
 				{question && (
 					<Text mb="5" mt="1" fontSize="sm" color="text.100">

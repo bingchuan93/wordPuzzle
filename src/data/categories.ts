@@ -5,23 +5,23 @@
 export const GameCategories: GameCategoryData[] = [
 	{
 		id: '1',
-		name: 'Country',
-		difficulty: 'Medium',
+		name: 'Occupation',
+		difficultyLevel: 1,
 	},
 	{
 		id: '2',
-		name: 'Occupation',
-		difficulty: 'Easy',
+		name: 'Country',
+		difficultyLevel: 2,
 	},
 	{
 		id: '3',
 		name: 'Animal',
-		difficulty: 'Hard',
+		difficultyLevel: 3,
 	},
 	{
 		id: '4',
 		name: 'Testing',
-		difficulty: 'Simple',
+		difficultyLevel: 1,
 	},
 ];
 
@@ -32,7 +32,7 @@ export const GameCategories: GameCategoryData[] = [
 export type GameCategoryData = {
 	id: string;
 	name: string;
-	difficulty: string;
+	difficultyLevel: number;
 };
 
 /**

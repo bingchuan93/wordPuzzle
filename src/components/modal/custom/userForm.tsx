@@ -35,6 +35,7 @@ const UserForm = ({ isOpen, onClose, mode }: Props): JSX.Element => {
 					title: 'No User Name',
 					message: 'Anonymous players will not have accumulated high score, are you sure?',
 					actionText: 'No',
+					actionCallback: () => setIsChangingUser(false),
 					closeText: 'Yes',
 					beforeCloseModalCallback: async () => {
 						dispatch(changeUser({ username: name, highScore: 0 }));

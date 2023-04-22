@@ -1,17 +1,20 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Box, Button, ScrollView, Spinner, Text, VStack } from 'native-base';
+import { Badge, Box, Button, HStack, ScrollView, Spinner, Text, VStack } from 'native-base';
 import { useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { HighScoreArray, RootStackParamList } from '../../type';
 import { getAllHighScore } from '../../utils';
 import _ from 'lodash';
 import { LEADERBOARD_TOP_THREE_THEME } from '../../constants';
+import { useAppSelector } from '../../redux/hooks';
+import { selectUser } from '../../redux/user';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Leaderboard'>;
 
 function Leaderboard({ navigation }: Props): JSX.Element {
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 	const [highScores, setHighScore] = useState<HighScoreArray>([]);
+	const user = useAppSelector(selectUser);
 	const insets = useSafeAreaInsets();
 
 	useEffect(() => {
@@ -45,6 +48,7 @@ function Leaderboard({ navigation }: Props): JSX.Element {
 									: LEADERBOARD_TOP_THREE_THEME[idx];
 							return (
 								<Box
+									key={idx}
 									outlineColor={colorTheme.outline ?? 'transparent'}
 									bg={colorTheme.bg}
 									px="6"
@@ -57,7 +61,22 @@ function Leaderboard({ navigation }: Props): JSX.Element {
 									alignItems="center"
 									color={colorTheme.text}
 								>
-									<Text>{highScore.name}</Text>
+									<HStack alignItems="center">
+										<Text>{highScore.name}</Text>
+										{highScore.name === user.username && (
+											<Button
+												size="xs"
+												ml="2"
+												px="1"
+												py="0.5"
+												bg="success.200"
+												_text={{ color: 'text.500', fontWeight: 'bold' }}
+												disabled
+											>
+												YOU
+											</Button>
+										)}
+									</HStack>
 									<Text>{highScore.score}</Text>
 								</Box>
 							);
