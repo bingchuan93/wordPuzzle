@@ -14,3 +14,4 @@ export type PromiseReturnType = {
 export type AsyncStorageReturnType<T> = PromiseReturnType & { result?: T };
 
 export type HighScoreRecord = { [key: string]: number };
+export type HighScoreArray = { name: string; score: number }[];
