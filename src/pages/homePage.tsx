@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { Box, Button, VStack, Text } from 'native-base';
+import { Box, Button, VStack, Text, ShareIcon } from 'native-base';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../type';
 import { StyleSheet } from 'react-native';
@@ -10,7 +10,6 @@ import { useAppSelector } from '../redux/hooks';
 import { selectUser } from '../redux/user';
 import { DEFAULT_USERNAME } from '../constants';
 import UserForm, { UserFormMode } from '../components/modal/custom/userForm';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Share from 'react-native-share';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'HomePage'>;
@@ -39,6 +38,15 @@ function HomePage({ navigation }: Props): JSX.Element {
 
 	const handleChangeUser = () => {
 		setIsChangingUser(true);
+	};
+
+	const handleShare = () => {
+		Share.open({
+			title: 'Word Puzzle',
+			message: `I have achieved a highscore of ${user.highScore}! Can you beat me?`,
+		})
+			.then((res) => {})
+			.catch((err) => {});
 	};
 
 	return (
@@ -116,26 +124,15 @@ function HomePage({ navigation }: Props): JSX.Element {
 							</View>
 						)}
 					</View>
-					<Button
-						mt="4"
-						onPress={() => {
-							// AsyncStorage.clear();
-
-							Share.open({ title: 'TEst title', message: 'testmessage' })
-								.then((res) => {
-									console.log(res);
-								})
-								.catch((err) => {
-									err && console.log(err);
-								});
-						}}
-					>
-						Clear (to remove)
-					</Button>
 				</View>
-				<Button mb="4" onPress={() => navigation.push('Leaderboard')}>
-					Leaders Board
-				</Button>
+				<Box w="100%" mb="4" flexDirection="row">
+					<Button flex="1" onPress={() => navigation.push('Leaderboard')}>
+						Leaders Board
+					</Button>
+					<Button ml="2" bg="text.100" onPress={handleShare}>
+						<ShareIcon color="white" />
+					</Button>
+				</Box>
 			</View>
 			<UserForm isOpen={isChangingUser} onClose={() => setIsChangingUser(false)} mode={userChangeMode} />
 		</>

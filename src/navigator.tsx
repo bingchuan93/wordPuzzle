@@ -16,7 +16,7 @@ function Root(): JSX.Element {
 				<Stack.Screen
 					name="Game"
 					component={Game}
-					options={{ gestureEnabled: true, headerBackVisible: false }}
+					options={{ gestureEnabled: false, headerBackVisible: false }}
 				/>
 			</Stack.Group>
 			<Stack.Group screenOptions={{ presentation: 'modal' }}>

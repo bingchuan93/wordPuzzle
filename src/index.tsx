@@ -30,7 +30,7 @@ function App(): JSX.Element {
 				700: '#C54B1B',
 			},
 			warning: {
-				500: '#F4E76Eƒ',
+				500: '#F4E76E',
 			},
 			bg: {
 				500: '#E0D8DE',

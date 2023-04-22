@@ -33,8 +33,8 @@ function Leaderboard({ navigation }: Props): JSX.Element {
 	const handleClose = () => navigation.goBack();
 
 	return (
-		<Box flex="1" flexDirection="column" justifyContent="space-between" px="4" mb={insets.bottom}>
-			{isLoading && <Spinner color="warning.500" />}
+		<Box flex="1" flexDirection="column" justifyContent="space-between" px="4" pb={insets.bottom + 4}>
+			{isLoading && <Spinner />}
 			{!isLoading && highScores.length && (
 				<ScrollView>
 					<VStack pt="4">

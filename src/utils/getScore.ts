@@ -24,9 +24,11 @@ const WordComplexityScoreTier: { [key: number]: number } = {
 export const getScore = ({
 	questionDisplay,
 	question,
+	noOfSkips,
 }: {
 	questionDisplay: LetterDisplay[][];
 	question: WordData;
+	noOfSkips: number;
 }): number => {
 	let noOfWordsModifier = 1;
 	let wordComplexityModifier = 1;
@@ -56,5 +58,5 @@ export const getScore = ({
 	wordComplexityModifier +=
 		WordComplexityScoreTier[questionDisplay[wordIdx].length as number] ?? WordComplexityScoreTier[18];
 
-	return Math.floor(score * noOfWordsModifier * wordComplexityModifier);
+	return Math.min(Math.floor(score * noOfWordsModifier * wordComplexityModifier - noOfSkips), 0);
 };

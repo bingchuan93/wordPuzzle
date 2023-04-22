@@ -4,7 +4,7 @@
 
 import { getRandomisedNumber } from '../utils';
 
-const wordsByCategory = [
+const wordsByCategory: WordRawData[] = [
 	{
 		categoryId: '1',
 		words: [
@@ -89,7 +89,12 @@ export type WordData = {
 	categoryId: string;
 	id: string;
 	word: string;
-	hint: string;
+	hint?: string;
+};
+
+export type WordRawData = {
+	categoryId: string;
+	words: { name: string; hint?: string }[];
 };
 
 /**

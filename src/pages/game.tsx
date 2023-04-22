@@ -173,7 +173,8 @@ function Game({ navigation, route }: Props): JSX.Element {
 			}
 			wordDisplay.forEach((letterDisplay) => (answer += letterDisplay.letter));
 		});
-		const score = getScore({ questionDisplay, question, noOfSkips });
+		const score = getScore({ questionDisplay, question: question as WordData, noOfSkips });
+		setNoOfSkips(0);
 		if (score === 0) {
 			dispatch(
 				open({
@@ -187,7 +188,7 @@ function Game({ navigation, route }: Props): JSX.Element {
 		} else {
 			const newTotalScore = totalScore + score;
 			const clonedQuestionIds = [...playedQuestionIds];
-			clonedQuestionIds.push(question.id);
+			clonedQuestionIds.push((question as WordData).id);
 			setPlayedQuestionIds(clonedQuestionIds);
 
 			await saveHighScore(user.username, newTotalScore);
@@ -219,7 +220,7 @@ function Game({ navigation, route }: Props): JSX.Element {
 	};
 
 	return (
-		<Box pt="128px" pb={`${insets.bottom}px`} style={{ flex: 1, justifyContent: 'space-between' }}>
+		<Box pt="128px" pb={insets.bottom + 4} style={{ flex: 1, justifyContent: 'space-between' }}>
 			<VStack alignItems="center">
 				{questionDisplay.map((wordDisplay, wordDisplayIdx) => {
 					return (
