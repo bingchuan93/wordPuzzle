@@ -61,12 +61,13 @@ function Leaderboard({ navigation }: Props): JSX.Element {
 									alignItems="center"
 									color={colorTheme.text}
 								>
-									<HStack alignItems="center">
-										<Text>{highScore.name}</Text>
+									<HStack alignItems="center" w="100%">
+										<Text mr="2" isTruncated>
+											{highScore.name}
+										</Text>
 										{highScore.name === user.username && (
 											<Button
 												size="xs"
-												ml="2"
 												px="1"
 												py="0.5"
 												bg="success.200"

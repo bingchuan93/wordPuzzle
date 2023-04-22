@@ -114,7 +114,9 @@ function HomePage({ navigation }: Props): JSX.Element {
 											onPress={() => navigation.navigate('Game', { categoryId: category.id })}
 										>
 											<HStack w="270px" justifyContent="space-between" alignItems="center">
-												<Text color="white">{category.name}</Text>
+												<Text color="white" isTruncated>
+													{category.name}
+												</Text>
 												<DifficultyLevel level={category.difficultyLevel} />
 											</HStack>
 										</Button>
