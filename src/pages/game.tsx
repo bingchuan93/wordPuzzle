@@ -2,15 +2,13 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { BackHandler } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../type';
-
 import { useFocusEffect } from '@react-navigation/native';
 import { getRandomisedWordByCategory, WordData } from '../data/words';
-import { GameCategoryData, getCategory } from '../data/categories';
+import { getCategory } from '../data/categories';
 import { Box, Button, HStack, VStack, Text, CloseIcon } from 'native-base';
 import { getRandomisedArray, getScore, saveHighScore } from '../utils';
 import _ from 'lodash';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Alert } from 'react-native';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { open } from '../redux/modal';
 import { selectUser, setHighScore } from '../redux/user';
@@ -146,10 +144,7 @@ function Game({ navigation, route }: Props): JSX.Element {
 				message:
 					"Your current game's progress will not be saved. Your previous score will be taken instead. Are you sure?",
 				closeText: 'Quit',
-				beforeCloseModalCallback: () => {
-					// BCWEE include saving score
-					navigation.goBack();
-				},
+				beforeCloseModalCallback: () => navigation.goBack(),
 				actionText: 'Stay',
 			}),
 		);
@@ -178,7 +173,6 @@ function Game({ navigation, route }: Props): JSX.Element {
 			}
 			wordDisplay.forEach((letterDisplay) => (answer += letterDisplay.letter));
 		});
-		console.log(answer);
 		const score = getScore({ questionDisplay, question, noOfSkips });
 		if (score === 0) {
 			dispatch(
@@ -196,15 +190,15 @@ function Game({ navigation, route }: Props): JSX.Element {
 			clonedQuestionIds.push(question.id);
 			setPlayedQuestionIds(clonedQuestionIds);
 
-			console.log(user);
 			await saveHighScore(user.username, newTotalScore);
+			setTotalScore(newTotalScore);
 			dispatch(setHighScore(newTotalScore));
 
 			if (hasMoreWords) {
 				dispatch(
 					open({
 						title: 'Congratulations!',
-						message: `You got it! You current score is ${newTotalScore}. Would you like to continue?`,
+						message: `You got it! You gained ${score} points.You current score is ${newTotalScore}. Would you like to continue?`,
 						actionText: 'Continue',
 						actionCallback: () => initGame(),
 						closeText: 'Exit',
