@@ -249,9 +249,9 @@ function Game({ navigation, route }: Props): JSX.Element {
 				</VStack>
 			</Box>
 			<Box alignItems="center" w="100%" px="4">
-				{question && (
+				{question && question.hint && (
 					<Text mb="5" mt="1" fontSize="sm" color="text.100">
-						Hint: {question.hint} {question.word}
+						Hint: {question.hint}
 					</Text>
 				)}
 				<HStack mt="5" mb="10" justifyContent="center" flexWrap="wrap">

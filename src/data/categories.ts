@@ -18,11 +18,11 @@ export const GameCategories: GameCategoryData[] = [
 		name: 'Animal',
 		difficultyLevel: 3,
 	},
-	{
-		id: '4',
-		name: 'Testing',
-		difficultyLevel: 1,
-	},
+	// {
+	// 	id: '4',
+	// 	name: 'Testing',
+	// 	difficultyLevel: 1,
+	// },
 ];
 
 /**

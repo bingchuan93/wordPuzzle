@@ -20,9 +20,6 @@ export const userSlice = createSlice({
 			state.username = action.payload.username;
 			state.highScore = action.payload.highScore;
 		},
-		setUser: (state, action: PayloadAction<UserState['username']>) => {
-			state.username = action.payload;
-		},
 		setHighScore: (state, action: PayloadAction<UserState['highScore']>) => {
 			if (action.payload > state.highScore) {
 				state.highScore = action.payload;
@@ -31,6 +28,6 @@ export const userSlice = createSlice({
 	},
 });
 
-export const { setUser, setHighScore, changeUser } = userSlice.actions;
+export const { setHighScore, changeUser } = userSlice.actions;
 export const selectUser = (state: RootState) => state.user;
 export default userSlice.reducer;

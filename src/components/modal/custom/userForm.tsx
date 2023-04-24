@@ -84,10 +84,16 @@ const UserForm = ({ isOpen, onClose, mode }: Props): JSX.Element => {
 				</>
 			}
 			footerButtons={[
-				<Button bg="danger.300" _pressed={{ background: 'danger.500' }} flex="1" onPress={handleClose}>
+				<Button
+					key="user-form-close-btn"
+					bg="danger.300"
+					_pressed={{ background: 'danger.500' }}
+					flex="1"
+					onPress={handleClose}
+				>
 					Close
 				</Button>,
-				<Button flex="1" ml="2" onPress={handleChange} isLoading={isChangingUser}>
+				<Button key="user-form-change-btn" flex="1" ml="2" onPress={handleChange} isLoading={isChangingUser}>
 					Change
 				</Button>,
 			]}

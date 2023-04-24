@@ -21,11 +21,3 @@ export const saveToAS = async (key: string, data: any): Promise<AsyncStorageRetu
 		AsyncStorage.setItem(key, JSON.stringify(data), (error) => resolve({ success: error ? false : true }));
 	});
 };
-
-export const clearAS = async (key: string): Promise<AsyncStorageReturnType<undefined>> => {
-	return new Promise((resolve) => {
-		AsyncStorage.removeItem(key, (error) => {
-			resolve({ success: error ? false : true });
-		});
-	});
-};
