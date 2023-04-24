@@ -19,8 +19,9 @@ function DifficultyLevel({ level }: Props): JSX.Element {
 	const theme = useMemo(() => getDifficultyTheme(level), [level]);
 
 	const renderDifficultyLevel = (): JSX.Element[] => {
+		const fixLevel = level > 3 ? 3 : level;
 		const icons = [];
-		for (let i = 0; i < level; i++) {
+		for (let i = 0; i < fixLevel; i++) {
 			icons.push(<WarningIcon key={i} color={theme} />);
 		}
 
