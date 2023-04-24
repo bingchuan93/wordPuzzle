@@ -67,6 +67,7 @@ describe('getScore can get score value if', () => {
 			answer: oneWordAnswer,
 			noOfSkips: 1,
 			expectedScore: 3,
+			failReason: undefined,
 		},
 		{
 			testDesp: 'question has 1 word and user answered correctly but skipped 2 time',
