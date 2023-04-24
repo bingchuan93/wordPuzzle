@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Badge, Box, Button, HStack, ScrollView, Spinner, Text, VStack } from 'native-base';
+import { Badge, Box, Button, Center, HStack, ScrollView, Spinner, Text, VStack } from 'native-base';
 import { useEffect, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { HighScoreArray, RootStackParamList } from '../../type';
@@ -38,7 +38,7 @@ function Leaderboard({ navigation }: Props): JSX.Element {
 	return (
 		<Box flex="1" flexDirection="column" justifyContent="space-between" px="4" pb={insets.bottom + 4}>
 			{isLoading && <Spinner />}
-			{!isLoading && highScores.length && (
+			{!isLoading && highScores.length ? (
 				<ScrollView>
 					<VStack pt="4">
 						{highScores.map((highScore, idx) => {
@@ -84,6 +84,10 @@ function Leaderboard({ navigation }: Props): JSX.Element {
 						})}
 					</VStack>
 				</ScrollView>
+			) : (
+				<Center pt="20">
+					<Text>Go play some game!</Text>
+				</Center>
 			)}
 			<Button onPress={handleClose}>Back</Button>
 		</Box>
