@@ -1,6 +1,11 @@
 import { WordData } from '../data/words';
 import { LetterDisplay } from '../pages/game';
 
+export enum FailReason {
+	WRONG_ANSWER = 'WRONG_ANSWER',
+	TOO_MANY_SKIP = 'TOO_MANY_SKIP',
+}
+
 const WordComplexityScoreTier: { [key: number]: number } = {
 	1: 0,
 	2: 0,
@@ -29,7 +34,7 @@ export const getScore = ({
 	questionDisplay: LetterDisplay[][];
 	question: WordData;
 	noOfSkips: number;
-}): number => {
+}): { score: number; failReason?: FailReason } => {
 	let noOfWordsModifier = 1;
 	let wordComplexityModifier = 1;
 	let wordIdx = 0;
@@ -53,10 +58,11 @@ export const getScore = ({
 		}
 	}
 	if (score === 0) {
-		return score;
+		return { score, failReason: FailReason.WRONG_ANSWER };
 	}
 	wordComplexityModifier +=
 		WordComplexityScoreTier[questionDisplay[wordIdx].length as number] ?? WordComplexityScoreTier[18];
 
-	return Math.max(Math.floor(score * noOfWordsModifier * wordComplexityModifier - noOfSkips), 0);
+	const finalScore = Math.max(Math.floor(score * noOfWordsModifier * wordComplexityModifier - noOfSkips), 0);
+	return { score: finalScore, failReason: finalScore === 0 ? FailReason.TOO_MANY_SKIP : undefined };
 };

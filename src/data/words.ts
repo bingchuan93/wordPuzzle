@@ -15,7 +15,7 @@ const wordsByCategory: WordRawData[] = [
 			{ name: 'Writer' },
 			{ name: 'Artist' },
 			{ name: 'Pilot' },
-			{ name: 'Chef' },
+			{ name: 'Developer' },
 			{ name: 'Singer' },
 			{ name: 'Baker' },
 			{ name: 'Athlete' },
@@ -118,11 +118,13 @@ export const getAllWords = (): WordData[] => {
 export const getRandomisedWordByCategory = (
 	categoryId: string,
 	playedWordIds: string[],
+	skippedQuestion?: WordData | null,
 ): { word: WordData; hasMore: boolean } => {
 	const allWords = getAllWords();
 	const wordsByCategory = allWords.filter((word) => word.categoryId === categoryId);
 	const unplayedWords = wordsByCategory.filter((word) => !playedWordIds.includes(word.id));
-	const randomIdx = getRandomisedNumber(wordsByCategory.length);
+	const removedSkippedWords = unplayedWords.filter((word) => word.id !== skippedQuestion?.id);
+	const randomIdx = getRandomisedNumber(removedSkippedWords.length);
 
-	return { word: unplayedWords[randomIdx], hasMore: playedWordIds.length !== unplayedWords.length - 1 };
+	return { word: removedSkippedWords[randomIdx], hasMore: unplayedWords.length > 1 };
 };

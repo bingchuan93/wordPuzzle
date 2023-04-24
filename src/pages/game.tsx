@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { open } from '../redux/modal';
 import { selectUser, setHighScore } from '../redux/user';
+import { FailReason } from '../utils/getScore';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Game'>;
 export type LetterDisplay = {
@@ -39,7 +40,7 @@ function Game({ navigation, route }: Props): JSX.Element {
 	useEffect(() => {
 		if (categoryId) {
 			initData();
-			initGame();
+			initGame([]);
 		}
 	}, []);
 
@@ -56,8 +57,12 @@ function Game({ navigation, route }: Props): JSX.Element {
 		}
 	};
 
-	const initGame = () => {
-		const { word: randomWord, hasMore } = getRandomisedWordByCategory(categoryId, playedQuestionIds);
+	const initGame = (playedQuestionIds: string[], skippedQuestion?: WordData | null) => {
+		const { word: randomWord, hasMore } = getRandomisedWordByCategory(
+			categoryId,
+			playedQuestionIds,
+			skippedQuestion,
+		);
 		randomWord.word = randomWord.word.toLocaleUpperCase();
 		setQuestion(randomWord);
 		setHasMoreWords(hasMore);
@@ -151,18 +156,28 @@ function Game({ navigation, route }: Props): JSX.Element {
 	};
 
 	const handleSkipGame = () => {
-		dispatch(
-			open({
-				title: 'Skip Current Game',
-				message: 'You will received -1 point if you skip this game. Are you sure?',
-				closeText: 'Skip',
-				beforeCloseModalCallback: () => {
-					initGame();
-					setNoOfSkips(noOfSkips + 1);
-				},
-				actionText: 'Resume',
-			}),
-		);
+		if (hasMoreWords) {
+			dispatch(
+				open({
+					title: 'Skip Current Game',
+					message: 'You will received -1 point if you skip this game. Are you sure?',
+					closeText: 'Skip',
+					beforeCloseModalCallback: () => {
+						initGame(playedQuestionIds, question);
+						setNoOfSkips(noOfSkips + 1);
+					},
+					actionText: 'Resume',
+				}),
+			);
+		} else {
+			dispatch(
+				open({
+					title: 'Last Question',
+					message: 'This is the only question left! You cannot skip anymore.',
+					closeText: 'Close',
+				}),
+			);
+		}
 	};
 
 	const handleCompleteGame = async () => {
@@ -173,13 +188,17 @@ function Game({ navigation, route }: Props): JSX.Element {
 			}
 			wordDisplay.forEach((letterDisplay) => (answer += letterDisplay.letter));
 		});
-		const score = getScore({ questionDisplay, question: question as WordData, noOfSkips });
+		const { score, failReason } = getScore({ questionDisplay, question: question as WordData, noOfSkips });
 		setNoOfSkips(0);
 		if (score === 0) {
 			dispatch(
 				open({
 					title: 'Oh no!',
-					message: `You've got the wrong answer. Your higest score is ${totalScore}`,
+					message: `${
+						failReason === FailReason.TOO_MANY_SKIP
+							? 'You skipped too many times!'
+							: "You've got the wrong answer"
+					}. Your higest score is ${totalScore}`,
 					actionText: 'Return to main page',
 					actionCallback: () => navigation.goBack(),
 					beforeCloseModalCallback: () => navigation.goBack(),
@@ -201,7 +220,7 @@ function Game({ navigation, route }: Props): JSX.Element {
 						title: 'Congratulations!',
 						message: `You got it! You gained ${score} points.You current score is ${newTotalScore}. Would you like to continue?`,
 						actionText: 'Continue',
-						actionCallback: () => initGame(),
+						actionCallback: () => initGame(clonedQuestionIds),
 						closeText: 'Exit',
 						beforeCloseModalCallback: () => navigation.goBack(),
 					}),

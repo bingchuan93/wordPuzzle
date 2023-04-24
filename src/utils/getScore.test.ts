@@ -1,6 +1,6 @@
 import { WordData } from '../data/words';
 import { LetterDisplay } from '../pages/game';
-import { getScore } from './getScore';
+import { FailReason, getScore } from './getScore';
 
 describe('getScore can get score value if', () => {
 	const oneWordQuestion: WordData = {
@@ -42,6 +42,7 @@ describe('getScore can get score value if', () => {
 			answer: oneWordAnswer,
 			noOfSkips: 0,
 			expectedScore: 4,
+			failReason: undefined,
 		},
 		{
 			testDesp: 'question has 2 word and user answers correctly',
@@ -49,6 +50,7 @@ describe('getScore can get score value if', () => {
 			answer: twoWordAnswer,
 			noOfSkips: 0,
 			expectedScore: 12,
+			failReason: undefined,
 		},
 		{
 			testDesp: 'question has 3 word and user answers correctly',
@@ -56,6 +58,7 @@ describe('getScore can get score value if', () => {
 			answer: threeWordAnswer,
 			noOfSkips: 0,
 			expectedScore: 24,
+			failReason: undefined,
 		},
 		// Correct Answer with skips
 		{
@@ -71,6 +74,7 @@ describe('getScore can get score value if', () => {
 			answer: oneWordAnswer,
 			noOfSkips: 2,
 			expectedScore: 2,
+			failReason: undefined,
 		},
 		{
 			testDesp: 'question has 2 words and user answered correctly but skipped 1 time',
@@ -78,6 +82,7 @@ describe('getScore can get score value if', () => {
 			answer: twoWordAnswer,
 			noOfSkips: 1,
 			expectedScore: 11,
+			failReason: undefined,
 		},
 		{
 			testDesp: 'question has 2 words and user answered correctly but skipped 2 time',
@@ -85,6 +90,15 @@ describe('getScore can get score value if', () => {
 			answer: twoWordAnswer,
 			noOfSkips: 2,
 			expectedScore: 10,
+			failReason: undefined,
+		},
+		{
+			testDesp: 'question has 1 words and user answered correctly but skipped 5 time',
+			question: oneWordQuestion,
+			answer: oneWordAnswer,
+			noOfSkips: 5,
+			expectedScore: 0,
+			failReason: FailReason.TOO_MANY_SKIP,
 		},
 		// Wrong Answer
 		{
@@ -93,6 +107,7 @@ describe('getScore can get score value if', () => {
 			answer: [[letterDisplays['A'], letterDisplays['W'], letterDisplays['N'], letterDisplays['D']]],
 			noOfSkips: 0,
 			expectedScore: 0,
+			failReason: FailReason.WRONG_ANSWER,
 		},
 		{
 			testDesp: 'question has 1 word and user answer third and fourth letter wrongly',
@@ -100,6 +115,7 @@ describe('getScore can get score value if', () => {
 			answer: [[letterDisplays['W'], letterDisplays['A'], letterDisplays['D'], letterDisplays['A']]],
 			noOfSkips: 0,
 			expectedScore: 0,
+			failReason: FailReason.WRONG_ANSWER,
 		},
 		{
 			testDesp: 'question has 2 words and user answer first word’s third and fourth letter wrongly',
@@ -110,6 +126,7 @@ describe('getScore can get score value if', () => {
 			],
 			noOfSkips: 0,
 			expectedScore: 0,
+			failReason: FailReason.WRONG_ANSWER,
 		},
 		{
 			testDesp: 'question has 2 words and user answer the second word’s first and second letter wrongly',
@@ -120,8 +137,12 @@ describe('getScore can get score value if', () => {
 			],
 			noOfSkips: 0,
 			expectedScore: 0,
+			failReason: FailReason.WRONG_ANSWER,
 		},
-	])('$testDesp', ({ question, answer, noOfSkips, expectedScore }) => {
-		expect(getScore({ questionDisplay: answer, question, noOfSkips })).toBe(expectedScore);
+	])('$testDesp', ({ question, answer, noOfSkips, expectedScore, failReason }) => {
+		expect(getScore({ questionDisplay: answer, question, noOfSkips })).toEqual({
+			score: expectedScore,
+			failReason,
+		});
 	});
 });
