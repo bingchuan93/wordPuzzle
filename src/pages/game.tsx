@@ -96,23 +96,40 @@ function Game({ navigation, route }: Props): JSX.Element {
 		return true;
 	};
 
-	const handleLetterSelect = ({ idx, letter }: { idx: number; letter: string }) => {
-		const clonedQuestionDisplay: LetterDisplay[][] = _.cloneDeep(questionDisplay);
-		clonedQuestionDisplay.some((wordDisplay) => {
-			return wordDisplay.some((letterDisplay) => {
-				if (letterDisplay.selectionIdx === -1) {
-					letterDisplay.letter = letter;
-					letterDisplay.selectionIdx = idx;
-					return true;
-				}
-				return false;
+	const handleLetterSelect = ({ idx, letter, isSelected }: { idx: number; letter: string; isSelected: boolean }) => {
+		if (!isSelected) {
+			const clonedQuestionDisplay: LetterDisplay[][] = _.cloneDeep(questionDisplay);
+			clonedQuestionDisplay.some((wordDisplay) => {
+				return wordDisplay.some((letterDisplay) => {
+					if (letterDisplay.selectionIdx === -1) {
+						letterDisplay.letter = letter;
+						letterDisplay.selectionIdx = idx;
+						return true;
+					}
+					return false;
+				});
 			});
-		});
 
-		const clonedLetterSelection: LetterSelection[] = _.cloneDeep(letterSelection);
-		clonedLetterSelection[idx].isSelected = true;
-		setQuestionDisplay(clonedQuestionDisplay);
-		setLetterSelection(clonedLetterSelection);
+			const clonedLetterSelection: LetterSelection[] = _.cloneDeep(letterSelection);
+			clonedLetterSelection[idx].isSelected = true;
+			setQuestionDisplay(clonedQuestionDisplay);
+			setLetterSelection(clonedLetterSelection);
+		} else {
+			const clonedQuestionDisplay: LetterDisplay[][] = _.cloneDeep(questionDisplay);
+			clonedQuestionDisplay.some((wordDisplay) => {
+				return wordDisplay.some((letterDisplay) => {
+					if (letterDisplay.selectionIdx === idx) {
+						resetLetterDisplay(letterDisplay);
+						return true;
+					}
+				});
+			});
+			setQuestionDisplay(clonedQuestionDisplay);
+
+			const clonedLetterSelection: LetterSelection[] = _.cloneDeep(letterSelection);
+			resetLetterSelection(clonedLetterSelection[idx]);
+			setLetterSelection(clonedLetterSelection);
+		}
 	};
 
 	const handleLetterDeselect = ({
@@ -330,6 +347,7 @@ function LetterDisplay({
 			h="10"
 			mt="3"
 			ml={idx === 0 ? '0' : '3'}
+			alignItems="center"
 			disabled={selectionIdx === -1}
 			onPress={() => onPress({ selectionIdx, letterDisplayIdx: idx })}
 			variant={selectionIdx === -1 ? 'outline' : undefined}
@@ -344,17 +362,20 @@ function LetterSelection({
 	isSelected,
 	idx,
 	onPress,
-}: LetterSelection & { idx: number; onPress: (params: { idx: number; letter: string }) => void }): JSX.Element {
+}: LetterSelection & {
+	idx: number;
+	onPress: (params: { idx: number; letter: string; isSelected: boolean }) => void;
+}): JSX.Element {
 	return (
 		<Button
 			w="10"
 			h="10"
 			mt="3"
 			ml={idx === 0 ? '0' : '3'}
-			disabled={isSelected}
 			variant={isSelected ? 'outline' : undefined}
+			_pressed={{ bg: isSelected ? 'white' : 'unset' }}
 			onPress={() => {
-				onPress({ idx, letter });
+				onPress({ idx, letter, isSelected });
 			}}
 		>
 			{letter}
