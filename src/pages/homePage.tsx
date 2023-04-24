@@ -88,7 +88,10 @@ function HomePage({ navigation }: Props): JSX.Element {
 							</Button>
 						</Box>
 						<Text fontSize="2xs" color="text.100">
-							Best Score: <Text bold>{user.highScore}</Text>
+							Best Score:{' '}
+							<Text fontSize="sm" bold>
+								{user.highScore}
+							</Text>
 						</Text>
 					</Box>
 					<View style={styles.contentContainer}>

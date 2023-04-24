@@ -257,7 +257,7 @@ function Game({ navigation, route }: Props): JSX.Element {
 
 	return (
 		<Box pt="64px" pb={insets.bottom + 4} style={{ flex: 1, justifyContent: 'space-between' }}>
-			<Box>
+			<Box px="4">
 				<Center mb="64px">
 					<Text>
 						Score: <Text bold>{totalScore}</Text>
